@@ -1,0 +1,47 @@
+# Core LLM & Orchestration
+langchain>=0.2.0
+langchain-community>=0.2.0
+langchain-ollama>=0.1.0
+langgraph>=0.1.0
+
+# Vector Store
+chromadb>=0.5.0
+
+# Document Parsing (unstructured)
+unstructured[pdf,md]>=0.14.0
+pdfminer.six>=20221105
+python-magic-bin>=0.4.14; sys_platform == "win32"
+python-docx>=1.1.0
+pillow>=10.0.0
+pypdf>=4.0.0
+pypdfium2>=5.0.0
+camelot-py[cv]>=0.11.0
+opencv-python>=4.8.0
+paddleocr>=2.7.0
+ghostscript>=0.7.0
+
+# Semantic Chunking
+sentence-transformers>=3.0.0
+
+# Embedding via Ollama
+ollama>=0.2.0
+
+# Cloud Fallback
+groq>=0.9.0
+langchain-groq>=0.1.0
+tenacity>=8.3.0
+
+# Reasoning Engine Upgrades
+flashrank>=0.2.9
+networkx>=3.3
+pyvis>=0.3.2
+
+# UI
+streamlit>=1.36.0
+streamlit-chat>=0.1.1
+
+# Utilities
+python-dotenv>=1.0.0
+tiktoken>=0.7.0
+numpy>=1.26.0
+tqdm>=4.66.0

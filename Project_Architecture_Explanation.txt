@@ -1,0 +1,63 @@
+# Cloud-Native Multi-Agent RAG Platform - Architecture & Task Breakdown
+
+This document provides a detailed explanation of the project's architecture, breaking down what each core file does and how it maps to the objectives of Day 1 and Day 2.
+
+---
+
+## 📅 DAY 1: Foundations, Document Ingestion & RAG
+The goal of Day 1 was to build a cloud-powered, AI-driven knowledge base capable of ingesting your documents (PDFs, Markdown, etc.) and answering questions accurately using RAG (Retrieval-Augmented Generation) powered by Groq.
+
+### Core Files (Day 1 Focus)
+
+1. `frontend/app.py`
+   - **What it does:** This is the main frontend built with Streamlit. It handles the user interface, file uploads for document ingestion, chat history, and displays the AI's responses and generated reports. 
+
+2. `backend/config.py` & `.env`
+   - **What it does:** Manages all the environment variables and configurations. This includes model names (Ollama / Groq), paths to databases, maximum retry counts for error correction loops, and Docker sandbox settings.
+
+3. `backend/llm_provider.py`
+   - **What it does:** Provides the underlying "Brain". It connects directly to the lightning-fast Groq Cloud API to process all requests.
+
+4. `backend/brain/vectorstore.py`
+   - **What it does:** Acts as your personal library index. It takes your documents, breaks them down into small semantic chunks (paragraphs/sentences), turns them into embeddings (numerical representations of meaning), and saves them into the local ChromaDB database so the AI can search for them incredibly fast later.
+
+5. `backend/agents/researcher.py`
+   - **What it does:** The primary RAG (Retrieval-Augmented Generation) agent. When you ask a normal question, this script takes your question, searches the `vectorstore.py` for matching text in your uploaded files, and hands that text to the LLM to write a knowledgeable answer.
+
+---
+
+## 📅 DAY 2: Action-Oriented Agents, Sandboxed Python & Reporting
+The goal of Day 2 was to evolve the system from a "read-only" chatbot into an autonomous agent capable of writing Python code to perform analytics (like calculating taxes), physically executing that code inside a secure Docker container, fixing its own bugs, and generating persistent files on your hard drive.
+
+### Core Files (Day 2 Focus)
+
+6. `agents/graph.py`
+   - **What it does:** The "Brain Casing" or state machine (built using LangGraph). This is the orchestrator that connects all the other agents together. It tracks the conversation, looks at your prompt, decides which path to take (chat, code, or report), and loops through error corrections if the code fails. 
+
+7. `agents/intent_router.py`
+   - **What it does:** The traffic cop. It reads your initial prompt using an LLM and classifies your intent into exactly one of three categories:
+     - `chat` (normal Q&A)
+     - `code` (analytics, math, or scripts like the Finance Tax demo)
+     - `report` (workspace crawling and summary)
+
+8. `agents/code_generator.py`
+   - **What it does:** The "programmer". If your intent is `code`, this agent is given the prompt and the relevant data (like PDF invoice text). It then writes raw Python code designed to solve your problem (e.g., regex loops to extract invoice amounts and sum them up). It also takes feedback from failed execution runs and re-writes the code to fix bugs.
+
+9. `agents/python_executor.py` (The Sandbox)
+   - **What it does:** The secure execution environment. It takes the code written by the `CodeGeneratorAgent`, spins up an isolated Docker container, mounts your current workspace folder into that container (so it can save reports directly to your computer), and runs the Python script. If the script crashes, it catches the error and sends it back to the graph for the code generator to fix.
+
+10. `agents/reporting.py`
+    - **What it does:** The file crawler. If your intent is `report`, this agent bypasses normal chat and Python generation. Instead, it crawls your local project directory, tallies up the sizes and counts of all your `.py`, `.md`, and `.bin` files, and asks the LLM to write a structured Markdown report (`Workspace_Report.md`) summarizing what your project looks like.
+
+---
+
+## 🚀 How it All Comes Together (The Final Stress Test Flow)
+
+When you send the final prompt: *"Find all invoices in my workspace. Calculate total tax paid using Python, and generate a report called Grand_Tax_Report.md"*:
+
+1. **`app.py`** receives the prompt and sends it to `graph.py`.
+2. **`intent_router.py`** tags this request as requiring `code` execution.
+3. **`vectorstore.py`** quickly retrieves the text of `Invoice_001.pdf`, `Invoice_002.pdf`, etc., and hands it to the code generator.
+4. **`code_generator.py`** writes Python code to extract the specific "$1800" formatted text from those chunks using regex and sums it up. It also writes the code to format and save `Grand_Tax_Report.md`.
+5. **`python_executor.py`** spins up Docker, runs the script, catches any Syntax or KeyError exceptions, passes them back for correction (if needed), and finally runs the perfect version, physically generating the report block into the mounted Windows directory.
+6. **`app.py`** successfully displays the final generated answer to you natively.
