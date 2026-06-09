@@ -1,5 +1,7 @@
 # ☁️ Cloud-Native Multi-Agent RAG Platform
 
+**🟢 Live Demo:** [https://cloud-native-multi-agent-rag-platform.streamlit.app/](https://cloud-native-multi-agent-rag-platform.streamlit.app/)
+
 A lightning-fast, multi-agent Retrieval-Augmented Generation (RAG) system powered by **Groq**, **LangGraph**, and **ChromaDB**. It transforms your documents (PDF, Markdown, Text) into a searchable, interactive knowledge base with built-in Knowledge Graph extraction and hallucination protection.
 
 ---
