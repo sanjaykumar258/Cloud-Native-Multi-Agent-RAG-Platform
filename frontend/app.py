@@ -679,8 +679,27 @@ with st.sidebar:
         if st.session_state.get("ingest_time"):
             st.markdown(f'<div class="stat-card" style="margin-top:0.5rem;"><div class="stat-num">{format_duration(st.session_state["ingest_time"])}</div><div class="stat-lbl">Time to Index</div></div>', unsafe_allow_html=True)
 
-    # Folder picker
-    st.markdown('<div class="sidebar-label">📁 Document Folder</div>', unsafe_allow_html=True)
+    # Document Source
+    st.markdown('<div class="sidebar-label">📁 Document Source</div>', unsafe_allow_html=True)
+
+    # 1. Cloud-Friendly File Uploader
+    uploaded_files = st.file_uploader("Upload Files (Cloud Friendly)", accept_multiple_files=True)
+    if uploaded_files:
+        import tempfile
+        import os
+        # Create a temp directory to hold the uploaded files for ingestion
+        if "temp_upload_dir" not in st.session_state:
+            st.session_state["temp_upload_dir"] = tempfile.mkdtemp(prefix="cloud_brain_")
+        
+        for f in uploaded_files:
+            file_path = os.path.join(st.session_state["temp_upload_dir"], f.name)
+            with open(file_path, "wb") as out_f:
+                out_f.write(f.read())
+                
+        # Automatically set the folder path to the temp directory
+        st.session_state["folder_path"] = st.session_state["temp_upload_dir"]
+
+    st.markdown("<div style='text-align: center; margin: 10px 0; color: #888;'>— OR —</div>", unsafe_allow_html=True)
 
     st.text_input("Path to folder", key="folder_path", label_visibility="collapsed", placeholder="/path/to/documents")
 
