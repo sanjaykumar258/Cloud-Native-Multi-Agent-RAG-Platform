@@ -195,6 +195,20 @@ html, body, [class*="css"] {
 .stat-num { font-size: 1.4rem; font-weight: 800; color: #a5b4fc; line-height: 1; }
 .stat-lbl { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 3px; }
 
+/* ── File Uploader ── */
+[data-testid="stFileUploadDropzone"] {
+    background: rgba(99,102,241,0.05);
+    border: 1px dashed rgba(99,102,241,0.3);
+    border-radius: 12px;
+}
+[data-testid="stFileUploadDropzone"]:hover {
+    background: rgba(99,102,241,0.1);
+    border: 1px dashed rgba(99,102,241,0.6);
+}
+[data-testid="stFileUploadDropzone"] small {
+    display: none;
+}
+
 /* ════════════════════════════════════════════
    MAIN AREA
    ════════════════════════════════════════════ */
@@ -649,8 +663,8 @@ with st.sidebar:
     <div class="brand-wrap">
         <div class="brand-icon">🧠</div>
         <div>
-            <div class="brand-title">Cloud Brain</div>
-            <div class="brand-sub">Multi-Agent RAG Platform</div>
+            <div class="brand-title">RAG Platform</div>
+            <div class="brand-sub">Cloud-Native Architecture</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -683,7 +697,7 @@ with st.sidebar:
     st.markdown('<div class="sidebar-label">📁 Document Source</div>', unsafe_allow_html=True)
 
     # 1. Cloud-Friendly File Uploader
-    uploaded_files = st.file_uploader("Upload Files (Cloud Friendly)", accept_multiple_files=True)
+    uploaded_files = st.file_uploader("Upload Files", accept_multiple_files=True, label_visibility="collapsed")
     if uploaded_files:
         import tempfile
         import os
