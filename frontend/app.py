@@ -679,34 +679,35 @@ with st.sidebar:
         if st.session_state.get("ingest_time"):
             st.markdown(f'<div class="stat-card" style="margin-top:0.5rem;"><div class="stat-num">{format_duration(st.session_state["ingest_time"])}</div><div class="stat-lbl">Time to Index</div></div>', unsafe_allow_html=True)
 
-    # Folder picker — opens native OS folder dialog
+    # Folder picker
     st.markdown('<div class="sidebar-label">📁 Document Folder</div>', unsafe_allow_html=True)
+
+    folder_input = st.text_input("Path to folder", value=st.session_state.get("folder_path", ""), label_visibility="collapsed", placeholder="/path/to/documents")
+    if folder_input != st.session_state.get("folder_path"):
+        st.session_state["folder_path"] = folder_input
 
     def _open_folder_dialog():
         """Open native folder picker and store result in session state."""
-        import tkinter as tk
-        from tkinter import filedialog
-        root = tk.Tk()
-        root.withdraw()
-        root.wm_attributes('-topmost', 1)          # bring dialog to front
-        selected = filedialog.askdirectory(title="Select Document Folder")
-        root.destroy()
-        if selected:
-            st.session_state["folder_path"] = selected
+        try:
+            import tkinter as tk
+            from tkinter import filedialog
+            root = tk.Tk()
+            root.withdraw()
+            root.wm_attributes('-topmost', 1)
+            selected = filedialog.askdirectory(title="Select Document Folder")
+            root.destroy()
+            if selected:
+                st.session_state["folder_path"] = selected
+        except Exception as e:
+            st.error("Folder browsing is only supported when running locally. Please type the path manually.")
 
-    if st.button("📂 Browse Folder", use_container_width=True, key="browse_folder"):
+    if st.button("📂 Browse Folder (Local Only)", use_container_width=True, key="browse_folder"):
         _open_folder_dialog()
         st.rerun()
 
     _current_path = st.session_state.get("folder_path", "")
     if _current_path:
-        st.markdown(
-            f'<div class="source-pill"><span class="source-pill-icon">📁</span>{_current_path}</div>',
-            unsafe_allow_html=True,
-        )
-        if st.button("✕ Clear path", key="clear_path"):
-            st.session_state["folder_path"] = ""
-            st.rerun()
+        st.markdown(f'<div class="source-pill"><span class="source-pill-icon">📁</span>{_current_path}</div>', unsafe_allow_html=True)
     else:
         st.caption("No folder selected")
 
