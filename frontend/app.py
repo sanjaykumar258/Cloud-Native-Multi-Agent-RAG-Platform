@@ -682,9 +682,7 @@ with st.sidebar:
     # Folder picker
     st.markdown('<div class="sidebar-label">📁 Document Folder</div>', unsafe_allow_html=True)
 
-    folder_input = st.text_input("Path to folder", value=st.session_state.get("folder_path", ""), label_visibility="collapsed", placeholder="/path/to/documents")
-    if folder_input != st.session_state.get("folder_path"):
-        st.session_state["folder_path"] = folder_input
+    st.text_input("Path to folder", key="folder_path", label_visibility="collapsed", placeholder="/path/to/documents")
 
     def _open_folder_dialog():
         """Open native folder picker and store result in session state."""
