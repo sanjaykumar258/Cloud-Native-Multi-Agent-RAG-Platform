@@ -696,12 +696,14 @@ with st.sidebar:
             root.destroy()
             if selected:
                 st.session_state["folder_path"] = selected
+            return True
         except Exception as e:
-            st.error("Folder browsing is only supported when running locally. Please type the path manually.")
+            st.error("⚠️ Folder browsing is only supported when running locally. Please type the path manually in the box above.")
+            return False
 
     if st.button("📂 Browse Folder (Local Only)", use_container_width=True, key="browse_folder"):
-        _open_folder_dialog()
-        st.rerun()
+        if _open_folder_dialog():
+            st.rerun()
 
     _current_path = st.session_state.get("folder_path", "")
     if _current_path:
